@@ -13,29 +13,34 @@ SafeInt(str, default) {
     }
 }
 
+defaultX := 1024
+defaultY := 1024
+defaultInterval := 100
+
 ; 创建配置 GUI
 mainGui := Gui()
 mainGui.Title := "鼠标连点器 - 配置参数"
 mainGui.MarginX := 15
 mainGui.MarginY := 15
 
+mainGui.Add("Text", "cBlue", "按 F8 开始连点，F9 停止连点")
 mainGui.Add("Text", , "X 坐标:")
-editX := mainGui.Add("Edit", "w120", "1274")
+editX := mainGui.Add("Edit", "w120", defaultX)
 
 mainGui.Add("Text", , "Y 坐标:")
-editY := mainGui.Add("Edit", "w120", "904")
+editY := mainGui.Add("Edit", "w120", defaultY)
 
 mainGui.Add("Text", , "点击间隔 (毫秒):")
-editInterval := mainGui.Add("Edit", "w120", "100")
+editInterval := mainGui.Add("Edit", "w120", defaultInterval)
 
 btnOK := mainGui.Add("Button", "Default xm", "确定")
 btnCancel := mainGui.Add("Button", "x+10", "取消")
 
 confirmed := false
 ; 先用默认值初始化，防止 GUI 销毁后访问控件报错
-clickX := 1274
-clickY := 904
-interval := 100
+clickX := defaultX
+clickY := defaultY
+interval := defaultInterval
 
 ; --- 使用普通函数替代箭头函数 ---
 btnOK.OnEvent("Click", OnOKClick)
@@ -48,9 +53,9 @@ OnOKClick(*) {
     global confirmed, mainGui, editX, editY, editInterval, clickX, clickY, interval
     confirmed := true
     ; 先读取值再销毁 GUI，避免控件已销毁导致报错
-    clickX := SafeInt(editX.Value, 1274)
-    clickY := SafeInt(editY.Value, 904)
-    interval := SafeInt(editInterval.Value, 100)
+    clickX := SafeInt(editX.Value, defaultX)
+    clickY := SafeInt(editY.Value, defaultY)
+    interval := SafeInt(editInterval.Value, defaultInterval)
     mainGui.Destroy()
 }
 
@@ -72,9 +77,9 @@ WinWaitClose(mainGui.Hwnd)
 
 ; 如果不是点击“确定”，恢复默认值
 if (!confirmed) {
-    clickX := 1274
-    clickY := 904
-    interval := 100
+    clickX := defaultX
+    clickY := defaultY
+    interval := defaultInterval
 }
 
 ; 最小间隔保护
