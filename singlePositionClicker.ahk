@@ -1,4 +1,4 @@
-﻿#Requires AutoHotkey v2.0
+#Requires AutoHotkey v2.0
 #SingleInstance Force
 
 CoordMode("Mouse", "Screen")
@@ -16,6 +16,7 @@ SafeInt(str, default) {
 defaultX := 1024
 defaultY := 1024
 defaultInterval := 100
+jitterEnabled := true
 
 ; 创建配置 GUI
 mainGui := Gui()
@@ -32,6 +33,8 @@ editY := mainGui.Add("Edit", "w120", defaultY)
 
 mainGui.Add("Text", , "点击间隔 (毫秒):")
 editInterval := mainGui.Add("Edit", "w120", defaultInterval)
+; 复选框控制是否启用随机抖动（可取消勾选）
+jitterCheck := mainGui.Add("Checkbox", "Checked", "随机时间间隔抖动")
 
 btnOK := mainGui.Add("Button", "Default xm", "确定")
 btnCancel := mainGui.Add("Button", "x+10", "取消")
@@ -41,6 +44,7 @@ confirmed := false
 clickX := defaultX
 clickY := defaultY
 interval := defaultInterval
+jitterEnabled := true
 
 ; --- 使用普通函数替代箭头函数 ---
 btnOK.OnEvent("Click", OnOKClick)
@@ -50,12 +54,14 @@ mainGui.OnEvent("Escape", OnGuiClose)
 
 ; 事件处理函数定义
 OnOKClick(*) {
-    global confirmed, mainGui, editX, editY, editInterval, clickX, clickY, interval
+    global confirmed, mainGui, editX, editY, editInterval, jitterCheck
+    global clickX, clickY, interval, jitterEnabled
     confirmed := true
     ; 先读取值再销毁 GUI，避免控件已销毁导致报错
     clickX := SafeInt(editX.Value, defaultX)
     clickY := SafeInt(editY.Value, defaultY)
     interval := SafeInt(editInterval.Value, defaultInterval)
+    jitterEnabled := (jitterCheck.Value = 1)
     mainGui.Destroy()
 }
 
@@ -80,6 +86,7 @@ if (!confirmed) {
     clickX := defaultX
     clickY := defaultY
     interval := defaultInterval
+    jitterEnabled := true
 }
 
 ; 最小间隔保护
@@ -90,11 +97,16 @@ running := false
 
 ; 启动连点（F8）
 F8:: {
-    global running, clickX, clickY, interval
+    global running, clickX, clickY, interval, jitterEnabled
     if (!running) {
         running := true
-        SetTimer(DoClick, interval)
-        ToolTip("连点开始 - X:" clickX ", Y:" clickY ", 间隔:" interval "ms")
+        if (jitterEnabled) {
+            SetTimer(DoClickWithJitter, interval)
+            ToolTip("连点开始 - 启用随机抖动")
+        } else {
+            SetTimer(DoClick, interval)
+            ToolTip("连点开始 - X:" clickX ", Y:" clickY ", 间隔:" interval "ms")
+        }
         Sleep(800)
         ToolTip()
     }
@@ -106,6 +118,7 @@ F9:: {
     if (running) {
         running := false
         SetTimer(DoClick, 0)
+        SetTimer(DoClickWithJitter, 0)
         ToolTip("连点停止")
         Sleep(500)
         ToolTip()
@@ -119,4 +132,16 @@ Esc::ExitApp()
 DoClick() {
     global clickX, clickY
     Click(clickX, clickY)
+}
+
+; 带随机抖动的连点函数
+DoClickWithJitter(*) {
+    global running, interval
+
+    jitterFactor := Random(0, 50) / 100.0
+    actualDelay := Round(interval * jitterFactor)
+
+    ; 在本次调用里等待抖动后的时间，再点击一次
+    Sleep(actualDelay)
+    DoClick()
 }
