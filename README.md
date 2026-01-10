@@ -9,11 +9,13 @@
 - `.ahk` is the source (for developers), `.exe` is the executable (for users).
 
 ## Versions
-- `mousePositionClicker.exe`: click at the current mouse position.  
+- `mousePositionClicker.exe`: click at the current mouse position.
+
   <img src="mousePositionClicker.png" width="200" alt="mousePositionClicker" />
-  
 - `singlePositionClicker.exe`: click at one fixed position.
+
   <img src="singlePositionClicker.png" width="200" alt="singlePositionClicker" />
   
 - `dualPositionClicker.exe`: alternately click between two positions.
+
   <img src="dualPositionClicker.png" width="200" alt="dualPositionClicker" />
