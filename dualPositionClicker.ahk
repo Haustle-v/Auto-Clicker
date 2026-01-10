@@ -14,17 +14,17 @@ SafeInt(str, default) {
 }
 
 ; 默认值
-defaultX1 := 390
-defaultY1 := 1420
-defaultX2 := 1532
-defaultY2 := 994
-defaultInterval1 := 180  ; 点完位置1后等待，再点位置2
-defaultInterval2 := 220  ; 点完位置2后等待，再点位置1
+defaultX1 := 380
+defaultY1 := 1480
+defaultX2 := 1530
+defaultY2 := 1030
+defaultInterval1 := 60  ; 点完位置1后等待，再点位置2
+defaultInterval2 := 80  ; 点完位置2后等待，再点位置1
 jitterEnabled := true
 
 ; 创建配置 GUI
 mainGui := Gui()
-mainGui.Title := "鼠标连点器 - 配置参数"
+mainGui.Title := "AHK"
 mainGui.MarginX := 15
 mainGui.MarginY := 15
 

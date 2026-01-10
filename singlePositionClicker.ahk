@@ -20,7 +20,7 @@ jitterEnabled := true
 
 ; 创建配置 GUI
 mainGui := Gui()
-mainGui.Title := "鼠标连点器 - 配置参数"
+mainGui.Title := "AHK"
 mainGui.MarginX := 15
 mainGui.MarginY := 15
 
